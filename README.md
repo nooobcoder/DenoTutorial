@@ -89,4 +89,16 @@ This is different from the bundle feature, where a JavaScript file is generated.
       Compile file:///home/coder/project/DenoTutorial/deno-webdev-book/chapter-two-toolchain/get-current-time.js
       Emit get-current-time
 
+## Dynamic Permissions (permissions at runtime)
+
+[Read more](https://deno.land/manual@v1.13.1/runtime/permission_apis#permission-apis)
+
+When writing Deno programs ourselves, it's very common that we know the required permissions beforehand. However, when writing or executing code that might or might not need some permissions or writing an interactive CLI utility, it might not make sense to ask for all permissions at once. That's what dynamic permissions are for.
+
+Dynamic permissions allow programs to ask for permissions as they are needed, allowing whoever is executing the code to give or deny specific permissions interactively.
+
+This is a feature that is still unstable and thus its APIs can change, but I think it's still worth mentioning, because of the amount of potential it enables.
+
+      // Dynamic permissions - ask for set of permissions during runtime
+      await Deno.permissions.request({ name: "read", path });
 ---

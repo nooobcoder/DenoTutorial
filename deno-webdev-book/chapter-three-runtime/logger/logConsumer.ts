@@ -3,7 +3,7 @@ import start from "./logCreator.ts";
 
 const processLogs = async () => {
   const destination = new Uint8Array(100);
-  const readBytes = await buffer.read(destination); // Reading from the buffer stream
+  const readBytes = await buffer.read(destination); // Reading from the buffer stream to the Uint8Array 
   const decoder = new TextDecoder();
   const encoder = new TextEncoder();
 

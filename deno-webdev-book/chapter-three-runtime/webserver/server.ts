@@ -1,4 +1,4 @@
-import { serve, red, readAll } from "./deps.js";
+import { serve, red, readAll, resolve, fromFileUrl } from "./deps.js";
 
 interface PostIt {
   title: string;
@@ -28,9 +28,11 @@ const postIts: Record<PostIt["id"], PostIt> = {
 
 // Using runtime permissions (--unstable)
 await Deno.permissions.request({ name: "net", host: HOST });
+await Deno.permissions.request({ name: "read" });
 if (
   (await Deno.permissions.query({ name: "net", host: HOST })).state ===
-  "granted"
+    "granted" &&
+  (await Deno.permissions.query({ name: "read" })).state === "granted"
 ) {
   const server = serve({ port: PORT, hostname: HOST });
 
@@ -42,6 +44,20 @@ if (
 
     headers.set("content-type", "application-json");
     switch (pathWithMethod) {
+      case "GET /": {
+        console.log(import.meta.url);
+
+        const file = await Deno.readFile(
+          resolve(fromFileUrl(import.meta.url), "..", "index.html")
+        );
+        const htmlHeaders = new Headers();
+        htmlHeaders.set("content-type", "text/html");
+        req.respond({
+          headers: htmlHeaders,
+          body: new TextDecoder().decode(file),
+        });
+        break;
+      }
       case "GET /api/post-its": {
         req.respond({ headers, body: JSON.stringify({ postIts }) });
         break;
@@ -67,5 +83,5 @@ if (
     }
   }
 } else {
-  console.log(red("Network access was not granted"));
+  console.log(red("Network access, read access was not granted"));
 }

@@ -12,6 +12,6 @@ export class Controller implements MuseumController {
   }
 
   async getAll() {
-    return this.museumRepository.getAll();
+    return await this.museumRepository.getAll();
   }
 }

@@ -3,6 +3,8 @@ import {
   Repository as MuseumRepository,
 } from "./museums/index.ts";
 
+import { createServer } from "./web/index.ts";
+
 const museumRepository: MuseumRepository = new MuseumRepository();
 const museumController: MuseumController = new MuseumController({
   museumRepository: {
@@ -22,3 +24,5 @@ museumRepository.storage.set("1fbdd2a9-1b97-46e0-b450-62819e5772ff", {
   location: { lat: "48.860294", lng: "2.33862" },
 });
 console.log(await museumRepository.getAll());
+
+createServer({ configuration: { PORT: 3000 } });

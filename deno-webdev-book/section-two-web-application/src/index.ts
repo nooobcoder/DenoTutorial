@@ -1,9 +1,14 @@
-import { Controller as MuseumController } from "./museums/controller.ts";
+import {
+  Controller as MuseumController,
+  Repository as MuseumRepository,
+} from "./museums/index.ts";
 
-const museumController = new MuseumController({
+const museumRepository: MuseumRepository = new MuseumRepository();
+const museumController: MuseumController = new MuseumController({
   museumRepository: {
-    getAll: async () => [],
+    getAll: async () => await [],
   },
 });
+
 // Top level await is allowed in Deno
 console.log(await museumController.getAll());

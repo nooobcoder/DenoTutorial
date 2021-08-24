@@ -1,4 +1,12 @@
 import {
+  Controller as UserController,
+  Repository as UserRepository,
+} from "./users/index.ts";
+
+const userRepository = new UserRepository();
+const userController = new UserController({ userRepository });
+
+import {
   Controller as MuseumController,
   Repository as MuseumRepository,
 } from "./museums/index.ts";
@@ -22,4 +30,8 @@ const museumController: MuseumController = new MuseumController({
 // Top level await is allowed in Deno
 // console.log(await museumController.getAll());
 
-createServer({ configuration: { PORT: 3000 }, museum: museumController });
+createServer({
+  configuration: { PORT: 3000 },
+  museum: museumController,
+  user: userController,
+});

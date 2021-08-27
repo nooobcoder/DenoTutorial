@@ -51,11 +51,19 @@ export async function createServer({
   await Deno.permissions.request(networkRequest);
   if ((await Deno.permissions.query(networkRequest)).state === "granted") {
     const app = new Application();
-    app.use(async ({response}, next) => {
+    // Middleware for request logging
+    app.use(async ({ request, response }, next) => {
+      await next();
+      const rt = response.headers.get("X-Response-Time");
+      console.log(`[LOG] < ${request.method}  ${request.url} - ${rt} >`);
+    });
+
+    // Middleware for 'X-Response-Time' header
+    app.use(async ({ response }, next) => {
       const start = Date.now();
       await next();
       const ms = Date.now() - start;
-      response.headers.set('X-Response-Time',`${ms}ms`)
+      response.headers.set("X-Response-Time", `${ms}ms`);
     });
 
     const apiRouter = new Router({ prefix: "/api" });

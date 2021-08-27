@@ -1,4 +1,5 @@
 import { Application, Router } from "../deps.ts";
+import type { RouterMiddleware } from "../deps.ts";
 import { MuseumController } from "../museums/index.ts";
 import { UserController } from "../users/index.ts";
 
@@ -8,6 +9,17 @@ interface CreateServerDependencies {
   user: UserController;
 }
 
+/* This shall act as a middleware for routes.
+   This function is always executed upon every request and then the actual function is execute via the next() call.
+*/
+const addTestHeaderMiddleware: RouterMiddleware = async (
+  { response },
+  next
+) => {
+  response.headers.set("X-Test", "true");
+  await next();
+};
+
 const routerController = (
   router: Router,
   museum: MuseumController,
@@ -15,6 +27,7 @@ const routerController = (
 ) => {
   router.get(
     "/museums",
+    addTestHeaderMiddleware,
     async ({ response }) => (response.body = { museums: await museum.getAll() })
   );
 
@@ -67,6 +80,10 @@ export async function createServer({
     });
 
     const apiRouter = new Router({ prefix: "/api" });
+    apiRouter.use(async (_, next) => {
+      console.log("Request made to the Router middleware");
+      await next();
+    });
     routerController(apiRouter, museum, user);
 
     app.addEventListener("listen", ({ hostname }) => {
@@ -86,6 +103,7 @@ export async function createServer({
     /* app.use(({ response }) => {
       response.body = "Hello World";
     }); */
+
     // This shall always remain at the bottom
     await app.listen({ hostname: "0.0.0.0", port: PORT });
   } else {

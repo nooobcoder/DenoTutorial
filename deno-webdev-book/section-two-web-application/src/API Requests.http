@@ -12,7 +12,7 @@ POST http://192.168.0.118:3000/api/login  HTTP/1.1
 Content-Type: 'application/json'
 
 {
-  "username":"A",
+  "username":"Ankur Paul",
   "password":"admin"
 }
 ### -----------------------------

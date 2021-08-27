@@ -13,4 +13,12 @@ export class Repository implements UserRepository {
   exists(username: string) {
     return Boolean(this.storage.get(username));
   }
+
+  async getByUsername(username: string) {
+    const user = this.storage.get(username);
+
+    if (!user) throw new Error("User not found");
+
+    return await user;
+  }
 }

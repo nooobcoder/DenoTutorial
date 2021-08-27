@@ -2,7 +2,7 @@ import { Application, Router } from "../deps.ts";
 import type { RouterMiddleware } from "../deps.ts";
 import { MuseumController } from "../museums/index.ts";
 import { UserController } from "../users/index.ts";
-
+import { LoginPayload } from "../users/types.ts";
 interface CreateServerDependencies {
   configuration: { PORT: number };
   museum: MuseumController;
@@ -48,6 +48,19 @@ const routerController = (
     } catch ({ message }) {
       ctx.response.status = 400;
       ctx.response.body = { message };
+    }
+  });
+
+  router.post("/login", async ({ request, response }) => {
+    const { username, password }: LoginPayload = await request.body().value;
+
+    try {
+      const { user: loginUser } = await user.login({ username, password });
+      response.body = { user: loginUser };
+      response.status = 201;
+    } catch (e) {
+      response.body = { message: e?.message };
+      response.status = 400;
     }
   });
 };

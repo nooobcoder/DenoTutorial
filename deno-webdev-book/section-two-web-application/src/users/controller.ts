@@ -1,7 +1,12 @@
 import type { UserRepository } from "./index.ts";
 import { userToUserDto } from "./adapter.ts";
 import { generateSalt, hashWithSalt } from "./util.ts";
-import { RegisterPayload, UserController } from "./types.ts";
+import {
+  RegisterPayload,
+  UserController,
+  LoginPayload,
+  User,
+} from "./types.ts";
 interface ControllerDependencies {
   userRepository: UserRepository;
 }
@@ -24,6 +29,14 @@ export class Controller implements UserController {
     return user;
   }
 
+  private async comparePassword(password: string, user: User) {
+    const hashedPassword = hashWithSalt(password, user.salt);
+
+    return hashedPassword === user.hash
+      ? await Promise.resolve(true)
+      : await Promise.reject(false);
+  }
+
   public async register({ username, password }: RegisterPayload) {
     // Logic to register users
 
@@ -36,5 +49,17 @@ export class Controller implements UserController {
     );
 
     return userToUserDto(createdUser);
+  }
+
+  public async login({ username, password }: LoginPayload) {
+    try {
+      const user = await this.userRepository.getByUsername(username);
+
+      await this.comparePassword(password, user);
+
+      return { user: userToUserDto(user) };
+    } catch (e) {
+      throw new Error("Username and/or password combination is incorrect.");
+    }
   }
 }

@@ -3,8 +3,22 @@ import {
   Repository as UserRepository,
 } from "./users/index.ts";
 
+import { AuthRepository, Algorithm } from "./deps.ts";
+const authRepository = new AuthRepository({
+  configuration: {
+    algorithm: "HS512",
+    key: "my-jwt-key",
+    tokenExpirationInSeconds: 120,
+  },
+});
+
 const userRepository = new UserRepository();
-const userController = new UserController({ userRepository });
+const userController = new UserController({ userRepository, authRepository });
+const authConfiguration = {
+  algorithm: "HS512" as Algorithm,
+  key: "my-jwt-key",
+  tokenExpirationInSeconds: 120,
+};
 
 import {
   Controller as MuseumController,
@@ -31,7 +45,13 @@ const museumController: MuseumController = new MuseumController({
 // console.log(await museumController.getAll());
 
 createServer({
-  configuration: { PORT: 3000 },
+  configuration: {
+    PORT: 3000,
+    authorization: {
+      key: authConfiguration.key,
+      algorithm: authConfiguration.algorithm,
+    },
+  },
   museum: museumController,
   user: userController,
 });

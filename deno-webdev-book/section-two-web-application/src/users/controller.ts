@@ -7,15 +7,19 @@ import {
   LoginPayload,
   User,
 } from "./types.ts";
+import { AuthRepository } from "../deps.ts";
 interface ControllerDependencies {
   userRepository: UserRepository;
+  authRepository: AuthRepository;
 }
 
 export class Controller implements UserController {
   userRepository: UserRepository;
+  authRepository: AuthRepository;
 
-  constructor({ userRepository }: ControllerDependencies) {
+  constructor({ userRepository, authRepository }: ControllerDependencies) {
     this.userRepository = userRepository;
+    this.authRepository = authRepository;
   }
 
   private getHashedUser(username: string, password: string) {
@@ -54,10 +58,11 @@ export class Controller implements UserController {
   public async login({ username, password }: LoginPayload) {
     try {
       const user = await this.userRepository.getByUsername(username);
+      const token = await this.authRepository.generateToken(user.username);
 
       await this.comparePassword(password, user);
 
-      return { user: userToUserDto(user) };
+      return { user: userToUserDto(user), token };
     } catch (e) {
       throw new Error("Username and/or password combination is incorrect.");
     }

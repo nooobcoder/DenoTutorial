@@ -1,33 +1,30 @@
-import { Application, Router } from "../deps.ts";
-import type { RouterMiddleware } from "../deps.ts";
+import { Application, Router, jwtMiddleware } from "../deps.ts";
+import type { Algorithm } from "../deps.ts";
 import { MuseumController } from "../museums/index.ts";
 import { UserController } from "../users/index.ts";
 import { LoginPayload } from "../users/types.ts";
 interface CreateServerDependencies {
-  configuration: { PORT: number };
+  configuration: {
+    PORT: number;
+    authorization: { key: string; algorithm: Algorithm };
+  };
   museum: MuseumController;
   user: UserController;
 }
-
-/* This shall act as a middleware for routes.
-   This function is always executed upon every request and then the actual function is execute via the next() call.
-*/
-const addTestHeaderMiddleware: RouterMiddleware = async (
-  { response },
-  next
-) => {
-  response.headers.set("X-Test", "true");
-  await next();
-};
 
 const routerController = (
   router: Router,
   museum: MuseumController,
   user: UserController
 ) => {
+  const authenticated = jwtMiddleware({
+    algorithm: "HS512",
+    key: "my-jwt-key",
+  });
+
   router.get(
     "/museums",
-    addTestHeaderMiddleware,
+    () => authenticated,
     async ({ response }) => (response.body = { museums: await museum.getAll() })
   );
 
@@ -55,8 +52,11 @@ const routerController = (
     const { username, password }: LoginPayload = await request.body().value;
 
     try {
-      const { user: loginUser } = await user.login({ username, password });
-      response.body = { user: loginUser };
+      const { user: loginUser, token } = await user.login({
+        username,
+        password,
+      });
+      response.body = { user: loginUser, token };
       response.status = 201;
     } catch (e) {
       response.body = { message: e?.message };
@@ -66,7 +66,7 @@ const routerController = (
 };
 
 export async function createServer({
-  configuration: { PORT = 3000 },
+  configuration: { PORT = 3000, authorization },
   museum,
   user,
 }: CreateServerDependencies) {

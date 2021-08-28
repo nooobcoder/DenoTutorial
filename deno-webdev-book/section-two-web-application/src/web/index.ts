@@ -8,6 +8,9 @@ interface CreateServerDependencies {
     PORT: number;
     authorization: { key: string; algorithm: Algorithm };
     allowedOrigins: Array<string>;
+    secure: boolean;
+    keyFile: string;
+    certFile: string;
   };
   museum: MuseumController;
   user: UserController;
@@ -68,7 +71,14 @@ const routerController = (
 };
 
 export async function createServer({
-  configuration: { PORT = 3000, authorization, allowedOrigins },
+  configuration: {
+    PORT = 3000,
+    authorization,
+    allowedOrigins,
+    secure = false,
+    keyFile,
+    certFile,
+  },
   museum,
   user,
 }: CreateServerDependencies) {
@@ -108,7 +118,9 @@ export async function createServer({
 
     app.addEventListener("listen", ({ hostname }) => {
       console.log(
-        `[ APPLICATION RUNNING AT http://${hostname || "localhost"}:${PORT}]`
+        `[ APPLICATION RUNNING AT ${secure ? "https" : "https"}://${
+          hostname || "localhost"
+        }:${PORT}]`
       );
     });
     app.addEventListener("error", ({ message }) =>
@@ -123,9 +135,9 @@ export async function createServer({
     await app.listen({
       hostname: "0.0.0.0",
       port: PORT,
-      secure: true,
-      certFile: "./cert.pem",
-      keyFile: "./key.pem",
+      secure,
+      certFile,
+      keyFile,
     });
   } else {
     console.error("[ NETWORK ACCESS WAS NOT ALLOWED ]");

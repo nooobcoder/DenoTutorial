@@ -19,7 +19,7 @@ await client.connect(
 );
 const db = client.database("getting-started-with-deno");
 
-const userRepository = new UserRepository({storage:db});
+const userRepository = new UserRepository({ storage: db });
 const userController = new UserController({ userRepository, authRepository });
 const authConfiguration = {
   algorithm: "HS512" as Algorithm,
@@ -48,16 +48,18 @@ const museumController: MuseumController = new MuseumController({
   museumRepository,
 });
 
-// Top level await is allowed in Deno
-// console.log(await museumController.getAll());
-
+const SERVER_PORT = 3000;
 createServer({
   configuration: {
-    PORT: 3000,
+    PORT: SERVER_PORT,
     authorization: {
       key: authConfiguration.key,
       algorithm: authConfiguration.algorithm,
     },
+    allowedOrigins: [
+      `http://192.168.0.118:${SERVER_PORT}`,
+      `http://localhost:${SERVER_PORT}`,
+    ],
   },
   museum: museumController,
   user: userController,

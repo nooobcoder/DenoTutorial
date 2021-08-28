@@ -1,4 +1,4 @@
-import { Application, Router, jwtMiddleware } from "../deps.ts";
+import { Application, Router, jwtMiddleware, oakCors } from "../deps.ts";
 import type { Algorithm } from "../deps.ts";
 import { MuseumController } from "../museums/index.ts";
 import { UserController } from "../users/index.ts";
@@ -7,6 +7,7 @@ interface CreateServerDependencies {
   configuration: {
     PORT: number;
     authorization: { key: string; algorithm: Algorithm };
+    allowedOrigins: Array<string>;
   };
   museum: MuseumController;
   user: UserController;
@@ -67,7 +68,7 @@ const routerController = (
 };
 
 export async function createServer({
-  configuration: { PORT = 3000, authorization },
+  configuration: { PORT = 3000, authorization, allowedOrigins },
   museum,
   user,
 }: CreateServerDependencies) {
@@ -78,6 +79,11 @@ export async function createServer({
   await Deno.permissions.request(networkRequest);
   if ((await Deno.permissions.query(networkRequest)).state === "granted") {
     const app = new Application();
+    app.use(
+      oakCors({
+        origin: allowedOrigins,
+      })
+    );
     // Middleware for request logging
     app.use(async ({ request, response }, next) => {
       await next();

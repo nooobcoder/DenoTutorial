@@ -119,13 +119,14 @@ export async function createServer({
     app.use(apiRouter.routes());
     app.use(apiRouter.allowedMethods());
 
-    // GET /
-    /* app.use(({ response }) => {
-      response.body = "Hello World";
-    }); */
-
     // This shall always remain at the bottom
-    await app.listen({ hostname: "0.0.0.0", port: PORT });
+    await app.listen({
+      hostname: "0.0.0.0",
+      port: PORT,
+      secure: true,
+      certFile: "./cert.pem",
+      keyFile: "./key.pem",
+    });
   } else {
     console.error("[ NETWORK ACCESS WAS NOT ALLOWED ]");
     Deno.exit();

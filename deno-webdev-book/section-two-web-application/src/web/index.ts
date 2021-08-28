@@ -17,14 +17,15 @@ const routerController = (
   museum: MuseumController,
   user: UserController
 ) => {
-  const authenticated = jwtMiddleware({
-    algorithm: "HS512",
-    key: "my-jwt-key",
-  });
+  const authenticated = () =>
+    jwtMiddleware({
+      algorithm: "HS512",
+      key: "my-jwt-key",
+    });
 
   router.get(
     "/museums",
-    () => authenticated,
+    () => authenticated(),
     async ({ response }) => (response.body = { museums: await museum.getAll() })
   );
 

@@ -23,7 +23,7 @@ content-type: application/json
 
 {
   "username": "Ankur Paul", 
-  "password": "supersecetpassword" 
+  "password": "admin" 
 }
 
 ### -----------------------------

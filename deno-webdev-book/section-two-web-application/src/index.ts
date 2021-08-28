@@ -12,7 +12,14 @@ const authRepository = new AuthRepository({
   },
 });
 
-const userRepository = new UserRepository();
+import { MongoClient } from "./deps.ts";
+const client = new MongoClient();
+await client.connect(
+  `mongodb://admin:adminadmin@192.168.0.118:27017/?authSource=admin&retryWrites=true&w=majority&useNewUrlParser=true&useUnifiedTopology=true&ssl=false`
+);
+const db = client.database("getting-started-with-deno");
+
+const userRepository = new UserRepository({storage:db});
 const userController = new UserController({ userRepository, authRepository });
 const authConfiguration = {
   algorithm: "HS512" as Algorithm,

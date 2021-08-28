@@ -7,8 +7,8 @@ export type User = {
 
 export type CreateUser = Pick<User, "username" | "hash" | "salt">;
 export interface UserRepository {
-  create: (user: CreateUser) => User;
-  exists: (username: string) => boolean;
+  create: (user: CreateUser) => Promise<User>;
+  exists: (username: string) => Promise<boolean>;
   getByUsername: (username: string) => Promise<User>;
 }
 

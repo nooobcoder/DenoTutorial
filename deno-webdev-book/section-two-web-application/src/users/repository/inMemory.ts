@@ -1,24 +1,21 @@
-import type { CreateUser, User, UserRepository } from "./types.ts";
+import type { CreateUser, User, UserRepository } from "../types.ts";
 
 export class Repository implements UserRepository {
   private storage = new Map<User["username"], User>();
-
-  create(user: CreateUser) {
-    const userWithCreatedAt: User = { ...user, createdAt: new Date() };
+  async create(user: CreateUser) {
+    const userWithCreatedAt = { ...user, createdAt: new Date() };
     this.storage.set(user.username, { ...userWithCreatedAt });
 
-    return userWithCreatedAt;
+    return await userWithCreatedAt;
   }
 
-  exists(username: string) {
+  async exists(username: string) {
     return Boolean(this.storage.get(username));
   }
 
   async getByUsername(username: string) {
     const user = this.storage.get(username);
 
-    if (!user) throw new Error("User not found");
-
-    return await user;
+    return (await user) || Promise.reject(new Error("User not found"));
   }
 }

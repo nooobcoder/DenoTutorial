@@ -1,5 +1,5 @@
 import { UserRepository, User, CreateUser } from "../types.ts";
-import {  Database, Collection } from "../../deps.ts";
+import { Database, Collection } from "../../deps.ts";
 
 interface RepositoryDependencies {
   storage: Database;
@@ -14,7 +14,7 @@ export class Repository implements UserRepository {
 
   async create(user: CreateUser) {
     const userWithCreatedAt = { ...user, createdAt: new Date() };
-    this.storage.insertOne({ ...user });
+    await this.storage.insertOne({ ...user });
 
     return userWithCreatedAt;
   }

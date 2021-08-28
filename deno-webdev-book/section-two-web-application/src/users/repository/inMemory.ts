@@ -10,7 +10,7 @@ export class Repository implements UserRepository {
   }
 
   async exists(username: string) {
-    return Boolean(this.storage.get(username));
+    return await Boolean(this.storage.get(username));
   }
 
   async getByUsername(username: string) {

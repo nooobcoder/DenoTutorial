@@ -1,1 +1,2 @@
-openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365
+openssl genrsa 2048 > key.pem
+openssl req -x509 -days 1000 -new -key key.pem -out cert.pem

@@ -135,9 +135,9 @@ export async function createServer({
     await app.listen({
       hostname: "0.0.0.0",
       port: PORT,
-      secure,
-      certFile,
-      keyFile,
+      // secure,
+      // certFile,
+      // keyFile,
     });
   } else {
     console.error("[ NETWORK ACCESS WAS NOT ALLOWED ]");

@@ -1,3 +1,6 @@
+import { load as loadConfiguration } from "./config/index.ts";
+const config = await loadConfiguration();
+
 import {
   Controller as UserController,
   Repository as UserRepository,
@@ -14,17 +17,15 @@ const authRepository = new AuthRepository({
 
 import { MongoClient } from "./deps.ts";
 const client = new MongoClient();
-await client.connect(
-  `mongodb://admin:adminadmin@192.168.0.118:27017/?authSource=admin&retryWrites=true&w=majority&useNewUrlParser=true&useUnifiedTopology=true&ssl=false`
-);
-const db = client.database("getting-started-with-deno");
+await client.connect(`mongodb://admin:adminadmin@${config.mongoDb.clusterURI}`);
+const db = client.database(config.mongoDb.database);
 
 const userRepository = new UserRepository({ storage: db });
 const userController = new UserController({ userRepository, authRepository });
 const authConfiguration = {
-  algorithm: "HS512" as Algorithm,
+  algorithm: config.jwt.algorithm as Algorithm,
   key: "my-jwt-key",
-  tokenExpirationInSeconds: 120,
+  tokenExpirationInSeconds: config.jwt.expirationTime,
 };
 
 import {
@@ -48,21 +49,17 @@ const museumController: MuseumController = new MuseumController({
   museumRepository,
 });
 
-const SERVER_PORT = 3000;
 createServer({
   configuration: {
-    PORT: SERVER_PORT,
+    PORT: config.web.port,
     authorization: {
       key: authConfiguration.key,
       algorithm: authConfiguration.algorithm,
     },
-    allowedOrigins: [
-      `http://192.168.0.118:${SERVER_PORT}`,
-      `http://localhost:${SERVER_PORT}`,
-    ],
+    allowedOrigins: config.cors.allowedOrigins,
     secure: true,
-    certFile: "./cert.pem",
-    keyFile: "./key.pem",
+    certFile: config.https.certificate,
+    keyFile: config.https.key,
   },
   museum: museumController,
   user: userController,

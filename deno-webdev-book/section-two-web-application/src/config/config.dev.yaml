@@ -1,0 +1,15 @@
+web:
+  port: 3000
+cors:
+  allowedOrigins:
+    - http://192.168.0.118:3000
+    - http://localhost:3000
+https:
+  key: ./key.pem
+  certificate: ./cert.pem
+jwt:
+  algorithm: HS512
+  expirationTime: 120
+mongoDb:
+  clusterURI: 192.168.0.118:27017/?authSource=admin&retryWrites=true&w=majority&useNewUrlParser=true&useUnifiedTopology=true&ssl=false
+  database: getting-started-with-deno

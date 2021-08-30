@@ -8,12 +8,13 @@ Content-Type: application/json
 ### -----------------------------
 
 # POST /api/login
-POST http://192.168.0.118:3000/api/login  HTTP/1.1
-Content-Type: 'application/json'
+POST /api/login HTTP/1.1
+Host: 192.168.0.118:3000
+Content-Type: application/json
 
 {
-  "username":"Ankur Paul",
-  "password":"admin"
+  "username": "Ankur Paul", 
+  "password": "admin" 
 }
 ### -----------------------------
 

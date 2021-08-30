@@ -4,6 +4,7 @@
   "deno.unstable": true,
   "deno.suggest.imports.hosts": {
     "https://deno.land": true,
-    "https://x.nest.land": true
+    "https://x.nest.land": true,
+    "https://deno.land/x": true
   }
 }

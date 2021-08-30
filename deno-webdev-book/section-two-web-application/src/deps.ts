@@ -14,3 +14,6 @@ export {
 } from "https://deno.land/x/mongo@v0.25.0/mod.ts";
 export { oakCors } from "https://deno.land/x/cors@v1.2.2/oakCors.ts";
 export { parse } from "https://deno.land/std@0.105.0/encoding/yaml.ts";
+
+// Loading the environment variables (https://deno.land/x/dotenv@v3.0.0#auto-loading)
+import "https://deno.land/x/dotenv@v3.0.0/load.ts";

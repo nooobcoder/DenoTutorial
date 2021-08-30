@@ -17,14 +17,16 @@ const authRepository = new AuthRepository({
 
 import { MongoClient } from "./deps.ts";
 const client = new MongoClient();
-await client.connect(`mongodb://admin:adminadmin@${config.mongoDb.clusterURI}`);
+await client.connect(
+  `mongodb://${config.mongoDb.username}:${config.mongoDb.password}@${config.mongoDb.clusterURI}`
+);
 const db = client.database(config.mongoDb.database);
 
 const userRepository = new UserRepository({ storage: db });
 const userController = new UserController({ userRepository, authRepository });
 const authConfiguration = {
   algorithm: config.jwt.algorithm as Algorithm,
-  key: "my-jwt-key",
+  key: config.jwt.key,
   tokenExpirationInSeconds: config.jwt.expirationTime,
 };
 

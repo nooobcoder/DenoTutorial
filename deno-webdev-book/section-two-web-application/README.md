@@ -1,3 +1,6 @@
+# Run App
+`deno run --no-check --watch --allow-net --unstable --allow-env --allow-read --allow-run index.ts`
+
 ## Goals of the App
 
 I am building an application that will let people create and interact with a list of museums. We can make this cleared by listing its features as user stories as follows:

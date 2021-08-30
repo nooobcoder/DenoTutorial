@@ -73,11 +73,11 @@ const routerController = (
 export async function createServer({
   configuration: {
     PORT = 3000,
-    authorization,
+    // authorization,
     allowedOrigins,
     secure = false,
-    keyFile,
-    certFile,
+    // keyFile,
+    // certFile,
   },
   museum,
   user,

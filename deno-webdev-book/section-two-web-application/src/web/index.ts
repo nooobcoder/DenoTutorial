@@ -21,6 +21,19 @@ const routerController = (
   museum: MuseumController,
   user: UserController
 ) => {
+  // Defining handler for the frontend (client/index.ts)
+  router.get("/client.js", async ({ request, response }) => {
+    const { files, diagnostics } = await Deno.emit("./client/index.ts", {
+      bundle: "classic",
+    });
+
+    if (!diagnostics.length) {
+      response.type = "application/javascript";
+      response.body = files["deno:///bundle.js"];
+      return;
+    }
+  });
+
   const authenticated = () =>
     jwtMiddleware({
       algorithm: "HS512",
@@ -133,7 +146,7 @@ export async function createServer({
 
     // This shall always remain at the bottom
     await app.listen({
-      hostname: "0.0.0.0",
+      hostname: "192.168.0.118",
       port: PORT,
       // secure,
       // certFile,

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,      initial-scale=1.0"
+    />
+    <title>Testing client</title>
+  </head>
+  <body></body>
+  <script type="module">
+    import { getClient } from "http://192.168.0.118:3000/api/client.js";
+
+    async function main() {
+      const client = getClient({ baseURL: "https://localhost:8080" });
+      const username = window.prompt("Username");
+      const password = window.prompt("Password");
+      await client.login({ username, password });
+      const { museums } = await client.getMuseums();
+      museums.forEach((museum) => {
+        const node = document.createElement("div");
+        node.innerHTML = `${museum.name} –      ${museum.description}`;
+        document.body.appendChild(node);
+      });
+    }
+  </script>
+</html>

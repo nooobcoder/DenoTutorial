@@ -21,6 +21,7 @@ tasks:
           git config commit.gpgsign true
 vscode:
     extensions:
+        - denoland.vscode-deno
         - mutantdino.resourcemonitor
         - cweijan.vscode-mysql-client2
         - Gruntfuggly.todo-tree
